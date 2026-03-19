@@ -1,0 +1,30 @@
+
+问题：ALU只输出了Zero给Control Unit，而Negative并没有输出给Control Unit。这导致Branch 只能判断是否为零，而不能判断是否小于或大于等于（即差值为负或非负）
+
+后果：blt与bge无法使用
+
+作出的改动（红色标记）：使ALU输出Negative（即ALUResult的第31位——符号位）并连接到Control Unit的输入，使Control Unit 可以判断结果是否小于或大于等于。
+
+问题：无法将下一个PC设定为rs1+imm的组合，这是因为基于PCSrc输出的多路选择器的0和1所对应的PCNext选项只有PC+4或PCtarget（即PC+imm，jal的功能），但是没有rs1+imm的输入选项（即jalr模式下的ALUResult）
+
+后果：jalr无法使用
+
+作出的改动（绿色标记）：
+    由于Result需要用于写入到rd中，已经被占用，所以rs1+imm的值将直接从ALUResult引出，而不是Result
+    另外将PCSrc输出改为2bit，并增加一个多路选择器接口用于添加一个额外的选择rs1+imm
+
+问题：
+    在当前电路中ImmExt只能用于与其他的值进行计算，而不能直接被储存到寄存器中，所以无法存储到rd中
+
+后果：lui无法使用
+
+做出的改动（橙色标记）：
+    将ImmExt的输出直接添加到Result的多路选择器中，以此来存储到rd中
+
+
+
+问题：contorl unit的alu control 输出只有【2:0】，没有alucontrol【3】和【4】，基于figure2可知，alu需要输入【4:0】来控制，其中alucontrol【3】和【4】所控制的shift sub/add都是未知状态状态，所有基于shift add/sub的功能都有可能出现问题。
+
+后果：add,sub,sll,srl. addi, slli, sril, lw, sw, beq bne blt jalr无法使用。
+
+修改方法：control unit的alu control从2:0改为4:0，以此添加shift，sub/add或sub的功能。

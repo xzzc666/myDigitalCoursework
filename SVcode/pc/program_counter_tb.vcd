@@ -1,0 +1,78 @@
+$date
+	Thu Mar 19 07:12:37 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module program_counter_tb $end
+$var wire 32 ! PC [31:0] $end
+$var reg 1 " CLK $end
+$var reg 32 # PCNext [31:0] $end
+$var reg 1 $ reset $end
+$scope module dut $end
+$var wire 1 " CLK $end
+$var wire 32 % PCNext [31:0] $end
+$var wire 1 $ reset $end
+$var reg 32 & PC [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx &
+b100 %
+1$
+b100 #
+0"
+bx !
+$end
+#5000
+b0 !
+b0 &
+1"
+#10000
+0"
+0$
+#15000
+b100 !
+b100 &
+1"
+#20000
+0"
+b1000 #
+b1000 %
+#25000
+b1000 !
+b1000 &
+1"
+#30000
+0"
+b1100 #
+b1100 %
+#35000
+b1100 !
+b1100 &
+1"
+#40000
+0"
+b10000 #
+b10000 %
+1$
+#45000
+b0 !
+b0 &
+1"
+#50000
+0"
+b10100 #
+b10100 %
+0$
+#55000
+b10100 !
+b10100 &
+1"
+#60000
+0"

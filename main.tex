@@ -1,0 +1,36 @@
+\documentclass[acmsmall]{acmart}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{subcaption}
+
+
+\lstset{
+  language=C,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  captionpos=b,
+  tabsize=2
+}
+
+% ——去除首页 ACM Reference Format 区块、页眉版权脚注等——
+\settopmatter{printacmref=false}        % 不打印“ACM Reference Format”
+\setcopyright{none}                     % 不显示版权声明
+
+
+\begin{document}
+\title{Digital Coursework}
+
+
+
+\maketitle
+
+\end{document}

@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cmake",
+            "label": "CMake: 清理重新生成",
+            "command": "cleanRebuild",
+            "targets": [
+                "[N/a - 选择工具包]"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake 模板 清理重新生成 任务"
+        },
+        {
+            "label": "iverilog build",
+            "type": "shell",
+            "command": "iverilog",
+            "args": [
+                "-g2012",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.vvp",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "vvp run",
+            "type": "shell",
+            "command": "vvp",
+            "args": [
+                "${fileBasenameNoExtension}.vvp"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "dependsOn": "iverilog build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "gtkwave open",
+            "type": "shell",
+            "command": "gtkwave",
+            "args": [
+                "${fileDirname}/${fileBasenameNoExtension}.vcd"
+            ],
+
+            "dependsOn": "vvp run",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
