@@ -8,15 +8,13 @@ module alu_tb;
     logic [4:0]  ALUControl;
     logic [31:0] ALUResult;
     logic        Zero;
-    logic        Negative;
 
     alu dut (
         .A(A),
         .B(B),
         .ALUControl(ALUControl),
         .ALUResult(ALUResult),
-        .Zero(Zero),
-        .Negative(Negative)
+        .Zero(Zero)
     );
 
     initial begin
@@ -25,9 +23,9 @@ module alu_tb;
     end
 
     initial begin
-        $display("Time\tALUControl\tA\t\tB\t\tALUResult\tZero\tNegative");
-        $monitor("%0t\t%b\t\t%h\t%h\t%h\t%b\t%b",
-                 $time, ALUControl, A, B, ALUResult, Zero, Negative);
+        $display("Time\tALUControl\tA\t\tB\t\tALUResult\tZero");
+        $monitor("%0t\t%b\t\t%h\t%h\t%h\t%b",
+                 $time, ALUControl, A, B, ALUResult, Zero);
 
         // =========================================================
         // Shift operation tests

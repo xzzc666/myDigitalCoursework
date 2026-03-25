@@ -3,7 +3,7 @@ module alu (
     input  logic [31:0] B,             // ALU input B
     input  logic [4:0]  ALUControl,    // ALU control signal
     output logic [31:0] ALUResult,     // ALU output result
-    output logic        Zero,          // Zero flag
+    output logic        Zero          // Zero flag
 );
 
     logic [31:0] shift_result;
@@ -11,8 +11,6 @@ module alu (
     logic [31:0] logic_result;
     logic [31:0] slt_result;
 
-    logic [31:0] b_arith;
-    logic        carry_in;
 
     always_comb begin
 
@@ -48,11 +46,11 @@ module alu (
             2'b01: ALUResult = slt_result;
             2'b10: ALUResult = arith_result;
             2'b11: ALUResult = logic_result;
-            default: ALUResult = 32'h00000000;
+            default: ALUResult = 32'h0;
         endcase
     end
 
     // Status flags
-    assign Zero     = (ALUResult == 32'h00000000);
+    assign Zero     = (ALUResult == 32'h0);
 
 endmodule

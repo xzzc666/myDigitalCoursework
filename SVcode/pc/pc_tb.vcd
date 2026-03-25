@@ -1,0 +1,78 @@
+$date
+	Thu Mar 26 04:40:33 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module pc_tb $end
+$var wire 32 ! PC [31:0] $end
+$var reg 1 " CLK $end
+$var reg 32 # PCNext [31:0] $end
+$var reg 32 $ expected [31:0] $end
+$var reg 1 % reset $end
+$var integer 32 & fail_count [31:0] $end
+$var integer 32 ' pass_count [31:0] $end
+$scope module dut $end
+$var wire 1 " CLK $end
+$var wire 32 ( PCNext [31:0] $end
+$var wire 1 % reset $end
+$var reg 32 ) PC [31:0] $end
+$upscope $end
+$scope task check_pc $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx )
+b100 (
+b0 '
+b0 &
+1%
+bx $
+b100 #
+0"
+bx !
+$end
+#5000
+b0 !
+b0 )
+1"
+#6000
+0%
+b1 '
+b0 $
+#10000
+0"
+#15000
+b100 !
+b100 )
+1"
+#16000
+b1000 #
+b1000 (
+b10 '
+b100 $
+#20000
+0"
+#25000
+b1000 !
+b1000 )
+1"
+#26000
+b100000000 #
+b100000000 (
+b11 '
+b1000 $
+#30000
+0"
+#35000
+b100000000 !
+b100000000 )
+1"
+#36000
+b100 '
+b100000000 $

@@ -1,4 +1,4 @@
-instr,RegWrite,ImmSrc2:0,ALUSrc,ALUControl4:0,MemWrite,ResultSrc1:0,PCSrc1:0
+instr,RegWrite,ImmSrc,ALUSrc,ALUControl,MemWrite,ResultSrc,PCSrc
 "add","1","XXX","0","X0X10","0","01","00"
 "sub","1","XXX","0","X1X10","0","01","00"
 "or","1","XXX","0","XX111","0","01","00"

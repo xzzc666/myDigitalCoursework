@@ -1,10 +1,4 @@
 
-问题：ALU只输出了Zero给Control Unit，而Negative并没有输出给Control Unit。这导致Branch 只能判断是否为零，而不能判断是否小于或大于等于（即差值为负或非负）
-
-后果：blt与bge无法使用
-
-作出的改动（红色标记）：使ALU输出Negative（即ALUResult的第31位——符号位）并连接到Control Unit的输入，使Control Unit 可以判断结果是否小于或大于等于。
-
 问题：无法将下一个PC设定为rs1+imm的组合，这是因为基于PCSrc输出的多路选择器的0和1所对应的PCNext选项只有PC+4或PCtarget（即PC+imm，jal的功能），但是没有rs1+imm的输入选项（即jalr模式下的ALUResult）
 
 后果：jalr无法使用
@@ -25,6 +19,34 @@
 
 问题：contorl unit的alu control 输出只有【2:0】，没有alucontrol【3】和【4】，基于figure2可知，alu需要输入【4:0】来控制，其中alucontrol【3】和【4】所控制的shift sub/add都是未知状态状态，所有基于shift add/sub的功能都有可能出现问题。
 
-后果：add,sub,sll,srl. addi, slli, sril, lw, sw, beq bne blt jalr无法使用。
+后果：add,sub,sll slt  slti,srl. addi, slli, sril, lw, sw, beq bne blt blt bge jalr无法使用。
 
 修改方法：control unit的alu control从2:0改为4:0，以此添加shift，sub/add或sub的功能。
+
+
+
+/*
+问题：ALU只输出了Zero给Control Unit，而Negative并没有输出给Control Unit。这导致Branch 只能判断是否为零，而不能判断是否小于或大于等于（即差值为负或非负）
+
+后果：blt与bge无法使用
+
+作出的改动（红色标记）：使ALU输出Negative（即ALUResult的第31位——符号位）并连接到Control Unit的输入，使Control Unit 可以判断结果是否小于或大于等于。
+*/
+
+虽然figure2中显示输出wire包含negative，但是这个似乎用不到，因为需要判断正负的指令有slt slti blt bge，这些中slt slti使用slt模式的zero用于判断大小，这个毋庸置疑，而blt和bge也可以直接使用alu的slt模式而不需要一个额外的negative线，因为他们的aluresult不会被使用，所以不用担心alu输出了什么，而slt模式的zero也可以用于表示rs1和rs2的大小差别，即：
+对于blt:
+rs1<rs2  ->  sltreslut = 1  -> Zero = 0 -> PCSrc = 01
+rs1>=rs2  ->  sltreslut = 0  -> Zero = 1 -> PCSrc = 00
+所以blt为
+"blt","0","010","0","X1X01","0","XX","{0,~Zero}"
+
+对于bge
+rs1<rs2  ->  sltreslut = 1  -> Zero = 0 -> PCSrc = 00
+rs1>=rs2  ->  sltreslut = 0  -> Zero = 1 -> PCSrc = 01
+所以bgn为
+"bgn","0","010","0","X1X01","0","XX","{0,Zero}"
+
+
+
+因此不需要另外添加一个negative线。
+在后续测试中，也可以看到使用zero也运行得没问题
