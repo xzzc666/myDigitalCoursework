@@ -1,0 +1,9 @@
+This program is a comprehensive test routine designed to verify the correct functionality of a single-cycle RISC-V processor implementation. It begins by constructing the memory-mapped I/O address (\texttt{0x7FFFFFFC}) and storing it in register \texttt{x31}, which is used to output results through store instructions.
+
+The program then sequentially tests a range of arithmetic, logical, and shift operations, including \texttt{addi}, \texttt{add}, \texttt{sub}, \texttt{or}, \texttt{sll}, and \texttt{slt}, by performing computations on predefined register values and writing the results to the output port.
+
+Next, it evaluates immediate-type instructions such as \texttt{andi}, \texttt{srli}, and \texttt{slti}, ensuring that immediate decoding and sign extension are correctly implemented. Memory access functionality is also verified using \texttt{sw} and \texttt{lw} instructions, confirming that data can be stored to and retrieved from memory correctly.
+
+The program further tests branch instructions (\texttt{beq}, \texttt{bne}, \texttt{blt}, \texttt{bge}) by checking both taken and not-taken conditions, ensuring proper control flow. Finally, it validates jump instructions (\texttt{jal} and \texttt{jalr}), including correct link register updates and indirect jumps.
+
+Overall, the program systematically exercises all supported instructions and verifies both datapath and control logic correctness.

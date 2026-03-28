@@ -24,6 +24,10 @@ module risc_v_tb;
         $dumpfile("risc_v_tb.vcd");
         $dumpvars(0, risc_v_tb);
 
+        $dumpvars(0, risc_v_tb.dut.u_reg_file.RF[1]);
+        $dumpvars(0, risc_v_tb.dut.u_reg_file.RF[2]);
+        $dumpvars(0, risc_v_tb.dut.u_reg_file.RF[3]);
+
         reset = 1'b1;
         CPUIn = 32'd20;
 

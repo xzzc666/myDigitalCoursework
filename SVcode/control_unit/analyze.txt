@@ -1,1 +1,10 @@
-The testbench results show that the control unit produces the correct control signals for all required RV32I instructions. The outputs for register write, immediate selection, ALU source, ALU control, memory write, result source, and PC source are all consistent with the control table. In particular, branch instructions are correctly handled through the interaction between the Zero flag and PCSrc selection, and BLT/BGE also work properly using the SLT-based comparison together with Zero. Although some don’t-care fields are assigned fixed values in simulation, they do not affect functionality. Overall, the control unit operates correctly and satisfies the coursework requirements.
+The testbench results show that the Control Unit generates the correct control signals for
+all required RV32I instructions. The outputs for RegWrite, ImmSrc, ALUSrc, ALUControl,
+MemWrite, ResultSrc, and PCSrc are all consistent with the designed control table.
+
+In particular, branch instructions are handled correctly through the interaction between the
+Zero flag and the PCSrc selection logic. The BLT and BGE instructions also operate properly
+by using the SLT-based comparison together with Zero. Although some don't-care fields are
+assigned fixed values during simulation, they do not affect the functionality of the
+processor. Overall, the Control Unit meets the coursework requirements and behaves correctly
+in the tested scenarios.

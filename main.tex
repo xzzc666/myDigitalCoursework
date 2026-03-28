@@ -7,11 +7,9 @@
 
 
 \lstset{
-  language=C,
   basicstyle=\ttfamily\small,
   keywordstyle=\color{blue},
   commentstyle=\color{gray},
-  stringstyle=\color{orange},
   numbers=left,
   numberstyle=\tiny,
   stepnumber=1,
@@ -21,7 +19,10 @@
   captionpos=b,
   tabsize=2
 }
-
+\lstset{
+    showspaces=false,
+    showstringspaces=false
+}
 % ——去除首页 ACM Reference Format 区块、页眉版权脚注等——
 \settopmatter{printacmref=false}        % 不打印“ACM Reference Format”
 \setcopyright{none}                     % 不显示版权声明
@@ -39,14 +40,14 @@
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/ori.png}
+    \includegraphics[width=1\textwidth]{figures/ori.png}
     \caption{Original circuit.}
     \label{fig:ori}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/redesign.jpg}
+    \includegraphics[width=1\textwidth]{figures/redesign.jpg}
     \caption{Redesign of the original circuit.}
     \label{fig:redesign}
 \end{figure}
@@ -57,7 +58,8 @@
 
 The original microarchitecture shown in Figure~\ref{fig:ori} cannot support all RV32I instructions due to several structural limitations. The key issues and corresponding modifications (shown in Figure~\ref{fig:redesign}) are summarised below.
 
-\subsubsection{Limitation 1: Missing PC Input for \texttt{jalr}}
+
+\subsubsection{Limitation 1: Missing PC Input(\texttt{jalr})}
 
 The PC multiplexer only selects between $PC + 4$ and $PC + \text{Imm}$, and does not support the $rs1 + imm$ operation required by \texttt{jalr}. As a result, \texttt{jalr} cannot be executed.
 
@@ -69,7 +71,7 @@ The output of the Extend unit (\texttt{ImmExt}) is not connected to the write-ba
 
 This is addressed by adding \texttt{ImmExt} as an additional input to the Result multiplexer and extending \texttt{ResultSrc} accordingly.
 
-\subsubsection{Limitation 3: Insufficient ALU Control Width}
+\subsubsection{Limitation 3: Insufficient ALU Control Width (\texttt{all operations that rely on addition, subtraction or shift functionality})}
 
 The ALU requires a 5-bit control signal to support all operations, but only a 3-bit control signal is provided in the original design. This leads to incomplete or incorrect execution of multiple instructions, including arithmetic operations (\texttt{add}, \texttt{sub}, \texttt{addi}), shift operations (\texttt{sll}, \texttt{srl}, \texttt{slli}, \texttt{srli}), comparison operations (\texttt{slt}, \texttt{slti}), memory access instructions (\texttt{lw}, \texttt{sw}), and control flow instructions (\texttt{beq}, \texttt{bne}, \texttt{blt}, \texttt{bge}, \texttt{jalr}). In particular, all operations that rely on addition/subtraction or shift functionality may behave incorrectly due to insufficient ALU control signals.
 
@@ -107,12 +109,12 @@ Hence, for \texttt{bge}, the branch decision can be implemented as:
 
 This shows that \texttt{Zero} is sufficient to distinguish both branch conditions once the ALU is operating in \texttt{SLT} mode. As a result, the \texttt{Negative} output does not provide any essential additional information for the supported instruction set.
 
-In summary, the \texttt{Negative} signal can be omitted. In the following sections, the processor design presented in this report consistently adopts the implementation without the \texttt{Negative} signal. The simulation results in Section~\ref{xxx} confirm that all required instructions operate correctly under this design, demonstrating that the \texttt{Negative} output is not necessary.
+In summary, the \texttt{Negative} signal can be omitted. In the following sections, the processor design presented in this report consistently adopts the implementation without the \texttt{Negative} signal. The simulation results in Section~\ref{sect:testbench} confirm that all required instructions operate correctly under this design, demonstrating that the \texttt{Negative} output is not necessary.
 
-\section{Control Signal Specification}
+\section{Task1.2}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/table.png}
+    \includegraphics[width=1\textwidth]{figures/table.png}
     \caption{Control signals for supported instructions.}
     \label{fig:control}
 \end{figure}
@@ -236,8 +238,214 @@ Both instructions write $PC + 4$ to the destination register (\texttt{ResultSrc 
 
 \texttt{lui} directly writes the U-type immediate to the destination register, so \texttt{ResultSrc = 00}. The ALU is not used, and execution proceeds sequentially.
 
+\section{Task1.3}
+\subsection{SystemVerilog code of the sub-blocks}
+\subsubsection{Program Counter}
+
+The SystemVerilog implementation of the Program Counter module is shown below.
+
+\lstinputlisting[caption={Program Counter module},label={lst:pc}]{SVcode/pc/pc.sv}
+
+\subsubsection{Extend}
+
+The SystemVerilog implementation of the Extend module is shown below.
+
+\lstinputlisting[caption={Extend module},label={lst:extend}]{SVcode/extend/extend.sv}
+
+\subsubsection{Arithmetic Logic Unit}
+
+The SystemVerilog implementation of the Arithmetic Logic Unit module is shown below.
+
+\lstinputlisting[caption={Arithmetic Logic Unit module},label={lst:alu}]{SVcode/alu/alu.sv}
+
+\subsubsection{Control Unit}
+
+The SystemVerilog implementation of the Control Unit module is shown below.
+
+\lstinputlisting[caption={Control Unit module},label={lst:control}]{SVcode/control_unit/control_unit.sv}
 
 
+\subsection{SystemVerilog testbench of the sub-blocks}\label{sect:testALU}
+
+\subsubsection{Program Counter}
+
+The testbench code of the Program Counter module is shown below.
+
+\lstinputlisting[caption={Program Counter testbench},label={lst:pc_tb}]{SVcode/pc/pc_tb.sv}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/pc/output_vcd.png}
+    \caption{Terminal result screenshot for the Program Counter module.}
+    \label{fig:pc_vcd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/pc/output_gtkwave.png}
+    \caption{GTKWave result screenshot for the Program Counter module.}
+    \label{fig:pc_gtkwave}
+\end{figure}
+
+The analysis of the Program Counter testbench is shown below.
+
+\input{SVcode/pc/analyze.txt}
+
+\subsubsection{Extend}
+
+The testbench code of the Extend module is shown below.
+
+\lstinputlisting[caption={Extend testbench},label={lst:extend_tb}]{SVcode/extend/extend_tb.sv}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/extend/output_vcd.png}
+    \caption{Terminal result screenshot for the Extend module.}
+    \label{fig:extend_vcd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/extend/output_gtkwave.png}
+    \caption{GTKWave result screenshot for the Extend module.}
+    \label{fig:extend_gtkwave}
+\end{figure}
+
+The analysis of the Extend testbench is shown below.
+
+\input{SVcode/extend/analyze.txt}
+
+\subsubsection{Arithmetic Logic Unit}
+
+The testbench code of the Arithmetic Logic Unit module is shown below.
+
+\lstinputlisting[caption={Arithmetic Logic Unit testbench},label={lst:alu_tb}]{SVcode/alu/alu_tb.sv}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/alu/output_vcd.png}
+    \caption{Terminal result screenshot for the Arithmetic Logic Unit module.}
+    \label{fig:alu_vcd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/alu/output_gtkwave.png}
+    \caption{GTKWave result screenshot for the Arithmetic Logic Unit module.}
+    \label{fig:alu_gtkwave}
+\end{figure}
+
+The analysis of the Arithmetic Logic Unit testbench is shown below.
+
+\input{SVcode/alu/analyze.txt}
+
+\subsubsection{Control Unit}
+
+The testbench code of the Control Unit module is shown below.
+
+\lstinputlisting[caption={Control Unit testbench},label={lst:control_tb}]{SVcode/control_unit/control_unit_tb.sv}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/control_unit/output_vcd.png}
+    \caption{Terminal result screenshot for the Control Unit module.}
+    \label{fig:control_vcd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/control_unit/output_gtkwave.png}
+    \caption{GTKWave result screenshot for the Control Unit module.}
+    \label{fig:control_gtkwave}
+\end{figure}
+
+The analysis of the Control Unit testbench is shown below.
+
+\input{SVcode/control_unit/analyze.txt}
+
+\section{Task1.4}
+
+\subsection{riscv code}
+
+The SystemVerilog implementation of the top-level RISC-V processor is shown below.
+
+\lstinputlisting[caption={Top-level RISC-V module},label={lst:riscv_code}]{SVcode/risc_v/risc_v.sv}
+
+\subsection{program.txt convert}
+
+\input{SVcode/risc_v/analyze_convert.txt}
+
+\subsection{riscv testbench code}
+
+The testbench code of the top-level RISC-V processor is shown below.
+
+\lstinputlisting[caption={RISC-V testbench},label={lst:riscv_tb}]{SVcode/risc_v/risc_v_tb.sv}
+
+\subsection{terminal result screenshot}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/risc_v/output_vcd.png}
+    \caption{Terminal result screenshot for the top-level RISC-V simulation.}
+    \label{fig:riscv_vcd}
+\end{figure}
+
+\subsection{gtkwave result screenshot}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{SVcode/risc_v/output_gtkwave.png}
+    \caption{GTKWave result screenshot for the top-level RISC-V simulation.}
+    \label{fig:riscv_gtkwave}
+\end{figure}
+
+\subsection{result analyze}
+
+\input{SVcode/risc_v/analyze.txt}
+
+\section{Task1.5}
+
+\subsection{Introduction to the Test Program}
+
+\input{SVcode/risc_v/describe.txt}
+
+\subsection{Terminal Result Screenshot of the Self-Designed RISC-V Processor}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{SVcode/risc_v/output_vcd_long.png}
+    \caption{Terminal result screenshot for the self-designed RISC-V processor running the test program.}
+    \label{fig:riscv_vcd_long}
+\end{figure}
+
+\subsection{GTKWave Result Screenshot of the Self-Designed RISC-V Processor}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{SVcode/risc_v/output_gtkwave_long.png}
+    \caption{GTKWave result screenshot for the self-designed RISC-V processor running the test program.}
+    \label{fig:riscv_gtkwave_long}
+\end{figure}
+
+\subsection{Results from the Online RISC-V Simulator}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{SVcode/risc_v/sim1.png}
+    \caption{Online RISC-V simulator result screenshot 1.}
+    \label{fig:sim1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{SVcode/risc_v/sim2.png}
+    \caption{Online RISC-V simulator result screenshot 2.}
+    \label{fig:sim2}
+\end{figure}
+
+\subsection{Result Analysis}
+
+\input{SVcode/risc_v/analyze_result.txt}
 
 
 \end{document}

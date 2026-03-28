@@ -1,16 +1,9 @@
-dumpfile program_counter_tb.vcd opened for output.
-Time    CLK     reset   PCNext          PC
-0       0       1       00000004        xxxxxxxx
-5000    1       1       00000004        00000000
-10000   0       0       00000004        00000000
-15000   1       0       00000004        00000004
-20000   0       0       00000008        00000004
-25000   1       0       00000008        00000008
-30000   0       0       0000000c        00000008
-35000   1       0       0000000c        0000000c
-40000   0       1       00000010        0000000c
-45000   1       1       00000010        00000000
-50000   0       0       00000014        00000000
-55000   1       0       00000014        00000014
+The simulation results show that the Program Counter module operates correctly. Whenever
+reset = 1, the PC is synchronously reset to 0 at the next positive clock edge. Otherwise,
+the PC is updated with the value of PCNext on each positive clock edge, which matches the
+expected behaviour of the design.
 
-每当 reset 为 1 时，PC 会被置为 0；否则，PC 更新为 PCNext，功能上符合预期。在最开始时 PC 为 X，这是正常的，因为在仿真开始时寄存器尚未被初始化，其初始值为不定态（X）。在第一个时钟信号的作用后，PC 会基于PCNext或reset被赋予确定值，所以不用担心 
+At the beginning of simulation, the PC output appears as X. This is normal, because the
+register has not yet been initialised before the first active clock edge. After the first
+clock edge, the PC takes a definite value determined by either reset or PCNext, so the
+module then behaves as expected.

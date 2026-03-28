@@ -1,0 +1,1 @@
+The simulation result is correct. The processor successfully executes the program in program.txt, reads the memory-mapped input value CPUIn = 20 from address 0x7FFFFFFC, computes 50 - 20 = 30, and writes the result 0x0000001E to CPUOut. The final beq x0, x0, 0 instruction then causes the processor to loop indefinitely at the same instruction address.

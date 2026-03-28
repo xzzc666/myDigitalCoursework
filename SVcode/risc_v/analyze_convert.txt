@@ -1,0 +1,136 @@
+\subsubsection{Disassembly of \texttt{program}}
+
+The machine code stored in \texttt{program.txt} can be disassembled into the following RISC-V assembly instructions:
+
+\begin{center}
+\begin{tabular}{ll}
+0x00000000: & 03200093 \quad addi x1, x0, 50 \\
+0x00000004: & 80000537 \quad lui  x10, 0x80000 \\
+0x00000008: & ffc52103 \quad lw   x2, -4(x10) \\
+0x0000000C: & 402081b3 \quad sub  x3, x1, x2 \\
+0x00000010: & fe352e23 \quad sw   x3, -4(x10) \\
+0x00000014: & 00000063 \quad beq  x0, x0, 0 \\
+\end{tabular}
+\end{center}
+
+\subsubsection{Method for Decoding Machine Code}
+
+Each instruction is 32 bits wide. The lowest 7 bits (\texttt{instr[6:0]}) define the opcode, which determines the instruction format. Once the format is identified, the remaining fields are extracted from fixed bit positions.
+
+The relevant field mappings are summarised below:
+
+\paragraph{R-type}
+\begin{itemize}
+    \item opcode = instr[6:0]
+    \item rd = instr[11:7]
+    \item funct3 = instr[14:12]
+    \item rs1 = instr[19:15]
+    \item rs2 = instr[24:20]
+    \item funct7 = instr[31:25]
+\end{itemize}
+
+\paragraph{I-type}
+\begin{itemize}
+    \item opcode = instr[6:0]
+    \item rd = instr[11:7]
+    \item funct3 = instr[14:12]
+    \item rs1 = instr[19:15]
+    \item imm[11:0] = instr[31:20]
+\end{itemize}
+
+\paragraph{S-type}
+\begin{itemize}
+    \item opcode = instr[6:0]
+    \item imm[4:0] = instr[11:7]
+    \item funct3 = instr[14:12]
+    \item rs1 = instr[19:15]
+    \item rs2 = instr[24:20]
+    \item imm[11:5] = instr[31:25]
+\end{itemize}
+
+\paragraph{B-type}
+\begin{itemize}
+    \item opcode = instr[6:0]
+    \item imm = sign-extended \{instr[31], instr[7], instr[30:25], instr[11:8], 1'b0\}
+\end{itemize}
+
+\paragraph{U-type}
+\begin{itemize}
+    \item opcode = instr[6:0]
+    \item rd = instr[11:7]
+    \item imm[31:12] = instr[31:12]
+\end{itemize}
+
+\subsubsection{Step-by-Step Decoding}
+
+Each instruction is decoded as follows:
+
+\paragraph{Instruction 1: 03200093}
+Opcode \texttt{0010011} indicates an I-type arithmetic instruction.  
+\texttt{funct3 = 000} corresponds to \texttt{addi}.  
+Thus, the instruction is:
+\[
+\texttt{addi x1, x0, 50}
+\]
+
+\paragraph{Instruction 2: 80000537}
+Opcode \texttt{0110111} indicates a U-type instruction (\texttt{lui}).  
+The immediate value is shifted left by 12 bits:
+\[
+\texttt{lui x10, 0x80000} \Rightarrow x10 = 0x80000000
+\]
+
+\paragraph{Instruction 3: ffc52103}
+Opcode \texttt{0000011} indicates a load instruction.  
+\texttt{funct3 = 010} selects \texttt{lw}.  
+The immediate \texttt{0xFFC} is sign-extended to \(-4\), giving:
+\[
+\texttt{lw x2, -4(x10)}
+\]
+
+\paragraph{Instruction 4: 402081b3}
+Opcode \texttt{0110011} indicates an R-type instruction.  
+\texttt{funct7 = 0100000} selects subtraction:
+\[
+\texttt{sub x3, x1, x2}
+\]
+
+\paragraph{Instruction 5: fe352e23}
+Opcode \texttt{0100011} indicates an S-type instruction.  
+The immediate is reconstructed and sign-extended to \(-4\):
+\[
+\texttt{sw x3, -4(x10)}
+\]
+
+\paragraph{Instruction 6: 00000063}
+Opcode \texttt{1100011} indicates a branch instruction.  
+\texttt{funct3 = 000} corresponds to \texttt{beq}.  
+Since both operands are \texttt{x0}, the condition is always true:
+\[
+\texttt{beq x0, x0, 0}
+\]
+
+This results in an infinite loop.
+
+\subsubsection{Expected Behaviour}
+
+The program constructs the address:
+\[
+0x80000000 - 4 = 0x7FFFFFFC
+\]
+
+This corresponds to the memory-mapped I/O address used by the \texttt{data\_memory\_and\_io} module.
+
+The program performs the following steps:
+\begin{enumerate}
+    \item Load the constant 50 into \texttt{x1}
+    \item Read \texttt{CPUIn} from address \texttt{0x7FFFFFFC} into \texttt{x2}
+    \item Compute \texttt{x3 = 50 - CPUIn}
+    \item Write \texttt{x3} to \texttt{CPUOut} via a store instruction
+    \item Enter an infinite loop using \texttt{beq x0, x0, 0}
+\end{enumerate}
+
+For the default testbench input \texttt{CPUIn = 20}, the expected output is:
+\[
+\texttt{CPUOut = 30}
+\]

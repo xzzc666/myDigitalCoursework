@@ -13,7 +13,7 @@ module alu (
 
 
     always_comb begin
-
+        
         // Shift path
         // ALUControl[4] = 0 for SLL, 1 for SRL
         case (ALUControl[4])

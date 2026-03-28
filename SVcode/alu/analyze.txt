@@ -1,1 +1,10 @@
-The ALU simulation results demonstrate that the module operates correctly across all tested functional categories, including shift, arithmetic, logic, and set-less-than operations. For each ALUControl configuration, the output matches the expected results, confirming that the datapath selection and control encoding are properly implemented. The Zero flag is also correctly asserted when the ALU result equals zero, enabling accurate branch condition evaluation. Notably, branch instructions such as BLT and BGE are successfully supported using a combination of the SLT operation and the Zero flag, without "Negative". Overall, the ALU design satisfies the functional requirements and behaves as intended under the provided test scenarios.
+The ALU simulation results show that the module operates correctly across all tested
+functional categories, including shift, arithmetic, logic, and set-less-than operations.
+For each ALUControl configuration, the output matches the expected result, confirming that
+the datapath selection and control encoding are implemented correctly.
+
+The Zero flag is also asserted correctly when the ALU result is equal to zero, which is
+important for branch decision logic. In particular, branch instructions such as BLT and BGE
+can be supported using the SLT operation together with the Zero flag, without requiring a
+separate Negative signal. Overall, the ALU behaves as intended and satisfies the coursework
+requirements under the tested conditions.

@@ -1,0 +1,5 @@
+The simulation results from the implemented RISC-V processor are consistent with the expected behaviour and match those obtained from the reference simulator. The output sequence observed on \texttt{CPUOut} correctly reflects the execution of each instruction in the test program. Arithmetic and logical operations such as \texttt{add}, \texttt{sub}, \texttt{or}, \texttt{sll}, and \texttt{slt} produce the expected results, confirming correct ALU functionality.
+
+Immediate instructions including \texttt{andi}, \texttt{srli}, and \texttt{slti} also behave correctly, indicating proper immediate decoding and sign extension. Memory operations are validated by storing and reloading values, demonstrating correct data memory access. Branch instructions correctly control program flow, as instructions in non-taken paths are skipped. Finally, the correct output value \texttt{0x00000789} confirms that both \texttt{jal} and \texttt{jalr} perform accurate control transfer and link register updates.
+
+Overall, the results verify that both the datapath and control unit operate correctly across all tested instructions.
