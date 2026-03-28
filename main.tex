@@ -3,6 +3,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{subcaption}
+\usepackage{float}
 
 
 \lstset{
@@ -24,7 +25,8 @@
 % ——去除首页 ACM Reference Format 区块、页眉版权脚注等——
 \settopmatter{printacmref=false}        % 不打印“ACM Reference Format”
 \setcopyright{none}                     % 不显示版权声明
-
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{plain}
 
 \begin{document}
 \title{Digital Coursework}
@@ -32,5 +34,210 @@
 
 
 \maketitle
+
+\section{Task1.1}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/ori.png}
+    \caption{Original circuit.}
+    \label{fig:ori}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/redesign.jpg}
+    \caption{Redesign of the original circuit.}
+    \label{fig:redesign}
+\end{figure}
+
+
+
+\subsection{Problems of the Original Microarchitecture}
+
+The original microarchitecture shown in Figure~\ref{fig:ori} cannot support all RV32I instructions due to several structural limitations. The key issues and corresponding modifications (shown in Figure~\ref{fig:redesign}) are summarised below.
+
+\subsubsection{Limitation 1: Missing PC Input for \texttt{jalr}}
+
+The PC multiplexer only selects between $PC + 4$ and $PC + \text{Imm}$, and does not support the $rs1 + imm$ operation required by \texttt{jalr}. As a result, \texttt{jalr} cannot be executed.
+
+To resolve this, the PC selection logic is extended by introducing a third input from \texttt{ALUResult}, which is $rs1 + imm$, and expanding \texttt{PCSrc} to 2 bits.
+
+\subsubsection{Limitation 2: Immediate Cannot Be Written Back (\texttt{lui})}
+
+The output of the Extend unit (\texttt{ImmExt}) is not connected to the write-back path, and therefore cannot be stored in the register file. This prevents execution of the \texttt{lui} instruction.
+
+This is addressed by adding \texttt{ImmExt} as an additional input to the Result multiplexer and extending \texttt{ResultSrc} accordingly.
+
+\subsubsection{Limitation 3: Insufficient ALU Control Width}
+
+The ALU requires a 5-bit control signal to support all operations, but only a 3-bit control signal is provided in the original design. This leads to incomplete or incorrect execution of multiple instructions, including arithmetic operations (\texttt{add}, \texttt{sub}, \texttt{addi}), shift operations (\texttt{sll}, \texttt{srl}, \texttt{slli}, \texttt{srli}), comparison operations (\texttt{slt}, \texttt{slti}), memory access instructions (\texttt{lw}, \texttt{sw}), and control flow instructions (\texttt{beq}, \texttt{bne}, \texttt{blt}, \texttt{bge}, \texttt{jalr}). In particular, all operations that rely on addition/subtraction or shift functionality may behave incorrectly due to insufficient ALU control signals.
+
+To fix this, the \texttt{ALUControl} signal is expanded from 3 bits to 5 bits, allowing full control of all ALU functionalities.
+
+\subsection{Justification for Not Using the Negative Signal}\label{sect:noNegative}
+
+Although the ALU shown in Figure~2 provides both \texttt{Zero} and \texttt{Negative} outputs, the \texttt{Negative} signal is not required in the redesigned processor. The reason is that all comparison-related instructions in the required instruction subset can already be implemented using the \texttt{SLT} operation together with the \texttt{Zero} signal. :contentReference[oaicite:2]{index=2}
+
+For \texttt{slt} and \texttt{slti}, the ALU directly produces a result of either 1 or 0, which is then written back to the destination register. Therefore, these instructions do not require a separate sign output.
+ 
+For branch instructions, the \texttt{ALURESULT} does not need to be written back, so only the branch decision matters. This means the \texttt{SLT} result can be used indirectly through the \texttt{Zero} flag.
+
+For \texttt{blt}, the ALU is configured to perform the \texttt{SLT} operation:
+\begin{itemize}
+    \item if $rs1 < rs2$, then the SLT result is 1, so \texttt{Zero} = 0, and the branch should be taken;
+    \item if $rs1 \geq rs2$, then the SLT result is 0, so \texttt{Zero} = 1, and the branch should not be taken.
+\end{itemize}
+
+Therefore, for \texttt{blt}, the branch decision can be implemented using:
+\[
+\texttt{PCSrc} = \{\texttt{0}, \sim \texttt{Zero}\}
+\]
+
+Similarly, for \texttt{bge}:
+\begin{itemize}
+    \item if $rs1 < rs2$, then the SLT result is 1, so \texttt{Zero} = 0, and the branch should not be taken;
+    \item if $rs1 \geq rs2$, then the SLT result is 0, so \texttt{Zero} = 1, and the branch should be taken.
+\end{itemize}
+
+Hence, for \texttt{bge}, the branch decision can be implemented as:
+\[
+\texttt{PCSrc} = \{\texttt{0}, \texttt{Zero}\}
+\]
+
+This shows that \texttt{Zero} is sufficient to distinguish both branch conditions once the ALU is operating in \texttt{SLT} mode. As a result, the \texttt{Negative} output does not provide any essential additional information for the supported instruction set.
+
+In summary, the \texttt{Negative} signal can be omitted. In the following sections, the processor design presented in this report consistently adopts the implementation without the \texttt{Negative} signal. The simulation results in Section~\ref{xxx} confirm that all required instructions operate correctly under this design, demonstrating that the \texttt{Negative} output is not necessary.
+
+\section{Control Signal Specification}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/table.png}
+    \caption{Control signals for supported instructions.}
+    \label{fig:control}
+\end{figure}
+
+Figure~\ref{fig:control} summarises the control signals for all supported instructions. Each signal is defined as follows.
+
+\subsection {Meaning of Control Signals}
+
+\textbf{RegWrite} enables writing the Result back to register \texttt{rd}.  
+
+\textbf{ImmSrc} selects the type of immediate generated by the Extend unit:
+\begin{itemize}
+    \item 000: I-type
+    \item 001: S-type
+    \item 010: B-type
+    \item 011: U-type
+    \item 100: J-type
+\end{itemize}
+
+\textbf{ALUSrc} selects the second ALU operand:
+\begin{itemize}
+    \item 0: register value (RD2)
+    \item 1: immediate (ImmExt)
+\end{itemize}
+
+\textbf{ALUControl[4:0]} determines the ALU operation:
+\begin{itemize}
+    \item Bit [4]: shift direction (0 = left, 1 = right)
+    \item Bit [3]: arithmetic (0 = add, 1 = sub)
+    \item Bit [2]: logic (0 = and, 1 = or)
+    \item Bits [1:0]:
+    \begin{itemize}
+        \item 00: shift
+        \item 01: set-less-than
+        \item 10: arithmetic
+        \item 11: logic
+    \end{itemize}
+\end{itemize}
+
+\textbf{MemWrite} enables writing to data memory.
+
+\textbf{ResultSrc} selects the write-back source:
+\begin{itemize}
+    \item 00: ImmExt
+    \item 01: ALUResult
+    \item 10: ReadData
+    \item 11: PCPlus4
+\end{itemize}
+
+\textbf{PCSrc} selects the next PC:
+\begin{itemize}
+    \item 00: $PC + 4$
+    \item 01: $PC + \text{ImmExt}$
+    \item 10: ALUResult
+\end{itemize}
+
+For branch instructions, symbolic forms are used:
+\begin{itemize}
+    \item \{0,Zero\}: branch when Zero = 1
+    \item \{0,$\sim$Zero\}: branch when Zero = 0
+\end{itemize}
+
+\subsection {Instruction-by-Instruction Explanation}
+\subsubsection{R-type Arithmetic and Logic Instructions (\texttt{add}, \texttt{sub}, \texttt{and}, \texttt{or})}
+
+These instructions use two register operands, so \texttt{ALUSrc = 0} and \texttt{RegWrite = 1}. The result is written back from the ALU (\texttt{ResultSrc = 01}), and execution proceeds sequentially (\texttt{PCSrc = 00}).
+
+The difference lies in \texttt{ALUControl}:  
+\texttt{add} uses addition (\texttt{X0X10}), \texttt{sub} uses subtraction (\texttt{X1X10}), while \texttt{and} and \texttt{or} use the logic path (\texttt{XX011} and \texttt{XX111}, respectively).
+
+\subsubsection{R-type Shift and Comparison Instructions (\texttt{sll}, \texttt{srl}, \texttt{slt})}
+
+These instructions also use register operands (\texttt{ALUSrc = 0}, \texttt{RegWrite = 1}, \texttt{ResultSrc = 01}).
+
+Shift instructions (\texttt{sll}, \texttt{srl}) select the shift path (\texttt{[1:0] = 00}), with bit [4] determining direction (left or right).  
+
+\texttt{slt} selects the comparison path (\texttt{[1:0] = 01}), producing a result of 0 or 1.
+
+\subsubsection{I-type Arithmetic and Logic Instructions (\texttt{addi}, \texttt{andi}, \texttt{ori})}
+
+These instructions use an immediate operand, so \texttt{ImmSrc = 000} and \texttt{ALUSrc = 1}. The ALU result is written back to the register file.
+
+The ALU operation matches their R-type counterparts: addition for \texttt{addi}, AND for \texttt{andi}, and OR for \texttt{ori}.
+
+\subsubsection{I-type Shift and Comparison Instructions (\texttt{slli}, \texttt{srli}, \texttt{slti})}
+
+These instructions also use \texttt{ImmExt} as the second operand (\texttt{ALUSrc = 1}).
+
+Shift instructions select the shift path, using the lower 5 bits of the immediate as the shift amount.  
+
+\texttt{slti} performs comparison using the SLT path and writes the result (0 or 1) to the destination register.
+
+\subsubsection{Memory Instructions (\texttt{lw}, \texttt{sw})}
+
+Both instructions compute the effective address using addition (\texttt{rs1 + ImmExt}), so \texttt{ALUSrc = 1} and \texttt{ALUControl} selects addition.
+
+For \texttt{lw}, \texttt{RegWrite = 1} and \texttt{ResultSrc = 10} so that data read from memory is written to the register file.  
+
+For \texttt{sw}, \texttt{RegWrite = 0} and \texttt{MemWrite = 1}, storing the value of \texttt{rs2} into memory.
+
+\subsubsection{Branch Instructions (\texttt{beq}, \texttt{bne}, \texttt{blt}, \texttt{bge})}
+
+These instructions do not write to the register file (\texttt{RegWrite = 0}) and use B-type immediates.
+
+\texttt{beq} and \texttt{bne} use subtraction to compare operands, with branching controlled by the \texttt{Zero} signal.  
+
+\texttt{blt} and \texttt{bge} use the SLT operation. The branch decision is determined from the \texttt{Zero} flag:  
+\texttt{blt} branches when \texttt{Zero = 0}, while \texttt{bge} branches when \texttt{Zero = 1}.
+
+More detailed reasoning for this design choice is discussed in Section~\ref{sect:noNegative}.
+
+\subsubsection{Jump Instructions (\texttt{jal}, \texttt{jalr})}
+
+Both instructions write $PC + 4$ to the destination register (\texttt{ResultSrc = 11}, \texttt{RegWrite = 1}).
+
+\texttt{jal} uses a J-type immediate and sets \texttt{PCSrc = 01}, selecting $PC + \text{ImmExt}$.  
+
+\texttt{jalr} uses an I-type immediate and computes the target address using the ALU (\texttt{rs1 + ImmExt}), so \texttt{PCSrc = 10}.
+
+\subsubsection{Immediate Upper Instruction (\texttt{lui})}
+
+\texttt{lui} directly writes the U-type immediate to the destination register, so \texttt{ResultSrc = 00}. The ALU is not used, and execution proceeds sequentially.
+
+
+
+
 
 \end{document}

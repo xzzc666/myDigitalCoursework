@@ -1,0 +1,249 @@
+Description of table.csv
+
+1. Meaning of each control signal
+
+RegWrite
+- 1: write Result back into register rd
+- 0: do not write the register file
+
+ImmSrc
+- 000: I-type immediate
+- 001: S-type immediate
+- 010: B-type immediate
+- 011: U-type immediate
+- 100: J-type immediate
+- XXX: not used / don't care for this instruction
+
+ALUSrc
+- 0: ALU input B comes from RD2
+- 1: ALU input B comes from ImmExt
+- X: don't care
+
+ALUControl
+- This is a 5-bit control used by the ALU implementation.
+- Bit [4]: shift direction
+  0 = shift left
+  1 = shift right
+- Bit [3]: arithmetic operation
+  0 = add
+  1 = subtract
+- Bit [2]: logic operation
+  0 = and
+  1 = or
+- Bits [1:0]: final ALU output selection
+  00 = shift path
+  01 = set-less-than path
+  10 = arithmetic path
+  11 = logic path
+- X means the corresponding bit is irrelevant for that instruction because another output path is selected.
+
+MemWrite
+- 1: store WD into data memory / output port
+- 0: no store operation
+
+ResultSrc
+- 00: write back ImmExt
+- 01: write back ALUResult
+- 10: write back ReadData
+- 11: write back PCPlus4
+- XX: don't care because RegWrite = 0
+
+PCSrc
+- 00: next PC = PC + 4
+- 01: next PC = PC + ImmExt
+- 10: next PC = ALUResult
+- {0,Zero}: means branch when Zero = 1, so PCSrc becomes 01 if Zero is true, otherwise 00
+- {0,~Zero}: means branch when Zero = 0, so PCSrc becomes 01 if Zero is false, otherwise 00
+
+
+3. Instruction-by-instruction explanation
+
+add
+- RegWrite = 1 because the sum is written to rd.
+- ImmSrc = XXX because R-type add does not use an immediate.
+- ALUSrc = 0 because the ALU uses rs2 from RD2.
+- ALUControl = X0X10 because the arithmetic path is selected by [1:0] = 10, and bit [3] = 0 chooses addition. The other bits are irrelevant.
+- MemWrite = 0 because add does not store to memory.
+- ResultSrc = 01 because rd receives ALUResult.
+- PCSrc = 00 because execution continues to the next sequential instruction.
+
+sub
+- Same datapath as add, but subtraction is needed instead of addition.
+- RegWrite = 1, ALUSrc = 0, ResultSrc = 01, PCSrc = 00.
+- ALUControl = X1X10 because [1:0] = 10 selects arithmetic output and bit [3] = 1 selects subtraction.
+- No memory write, so MemWrite = 0.
+
+or
+- This is an R-type logic instruction, so RegWrite = 1 and ALUSrc = 0.
+- The ALU must output the logic path, so [1:0] = 11.
+- For OR, bit [2] = 1, so ALUControl = XX111.
+- Result is written back from the ALU, so ResultSrc = 01.
+- No branch and no memory access, so PCSrc = 00 and MemWrite = 0.
+
+and
+- Same structure as or, but bit [2] = 0 selects AND.
+- Therefore ALUControl = XX011.
+- RegWrite = 1, ALUSrc = 0, ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+sll
+- This is an R-type shift instruction.
+- RegWrite = 1 because the shifted value is written to rd.
+- ALUSrc = 0 because the shift amount comes from rs2[4:0].
+- The shift path is selected by [1:0] = 00.
+- Bit [4] = 0 selects shift left, so ALUControl = 0XX00.
+- ResultSrc = 01 because the destination register receives ALUResult.
+- MemWrite = 0 and PCSrc = 00.
+
+srl
+- Same as sll except the shift direction is right.
+- Bit [4] = 1, so ALUControl = 1XX00.
+- RegWrite = 1, ALUSrc = 0, ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+slt
+- This is an R-type signed comparison.
+- RegWrite = 1 because the result 0 or 1 is written to rd.
+- ALUSrc = 0 because rs2 is the second operand.
+- The SLT path is selected by [1:0] = 01.
+- In the current table, ALUControl is written as X1X01, meaning the compare operation is associated with the less-than path. In the current ALU implementation, only [1:0] = 01 really determines that SLT output is used; the X positions are don't-cares from the datapath point of view.
+- ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+addi
+- This is an I-type arithmetic instruction, so an immediate is required.
+- RegWrite = 1 because the sum is written to rd.
+- ImmSrc = 000 to generate the I-type immediate.
+- ALUSrc = 1 so the ALU adds rs1 and ImmExt.
+- ALUControl = X0X10 because addition uses the arithmetic path.
+- ResultSrc = 01 because the ALU result is written back.
+- MemWrite = 0 and PCSrc = 00.
+
+ori
+- I-type logic instruction.
+- RegWrite = 1, ImmSrc = 000, ALUSrc = 1.
+- The logic path is required, and OR is selected by bit [2] = 1.
+- Therefore ALUControl = XX111.
+- ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+andi
+- Same as ori except the logic function is AND.
+- Therefore ALUControl = XX011.
+- RegWrite = 1, ImmSrc = 000, ALUSrc = 1, ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+slli
+- I-type shift instruction.
+- ImmSrc = 000 because the shift amount is carried in the I-type immediate field.
+- ALUSrc = 1 so the ALU receives ImmExt, and the ALU only uses B[4:0] as the shift amount.
+- Bit [4] = 0 selects shift left, and [1:0] = 00 selects the shift output.
+- Therefore ALUControl = 0XX00.
+- RegWrite = 1, ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+srli
+- Same as slli except shift right is needed.
+- Bit [4] = 1, so ALUControl = 1XX00.
+- RegWrite = 1, ImmSrc = 000, ALUSrc = 1, ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+slti
+- This is the immediate version of SLT.
+- RegWrite = 1 because the comparison result is written to rd.
+- ImmSrc = 000 because this is I-type.
+- ALUSrc = 1 so the comparison uses rs1 and ImmExt.
+- ALUControl = X1X01 in the table, indicating the less-than output path.
+- ResultSrc = 01, MemWrite = 0, PCSrc = 00.
+
+lw
+- A load instruction computes an address, reads memory, and writes the loaded value into rd.
+- RegWrite = 1 because the loaded word is written to rd.
+- ImmSrc = 000 because lw is I-type.
+- ALUSrc = 1 because the ALU calculates rs1 + ImmExt as the effective address.
+- ALUControl = X0X10 because the address is formed by addition.
+- MemWrite = 0 because lw reads memory.
+- ResultSrc = 10 because rd must receive ReadData from the data memory.
+- PCSrc = 00 because execution continues normally.
+
+sw
+- A store instruction computes an address and writes rs2 into memory.
+- RegWrite = 0 because no register is written.
+- ImmSrc = 001 because sw uses the S-type immediate.
+- ALUSrc = 1 because the address is rs1 + ImmExt.
+- ALUControl = X0X10 because address generation requires addition.
+- MemWrite = 1 because the store operation is active.
+- ResultSrc = XX because there is no register writeback.
+- PCSrc = 00 because this is not a branch or jump.
+
+beq
+- Branch if equal compares rs1 and rs2.
+- RegWrite = 0 because branches do not write rd.
+- ImmSrc = 010 because branch instructions use the B-type immediate.
+- ALUSrc = 0 because both operands come from the register file.
+- ALUControl = X1X10 because subtraction is used to test equality: rs1 - rs2.
+- If the subtraction result is zero, the Zero flag becomes 1.
+- PCSrc = {0,Zero}, meaning branch target is selected when Zero = 1, otherwise PC + 4 is used.
+- MemWrite = 0 and ResultSrc = XX.
+
+bne
+- Same compare structure as beq: subtract rs2 from rs1.
+- RegWrite = 0, ImmSrc = 010, ALUSrc = 0, ALUControl = X1X10, MemWrite = 0.
+- PCSrc = {0,~Zero} because the branch is taken when the subtraction result is not zero.
+- ResultSrc = XX because no register is written.
+
+blt
+- Branch if less than performs a signed comparison between rs1 and rs2.
+- RegWrite = 0, ImmSrc = 010, ALUSrc = 0, MemWrite = 0.
+- ALUControl = X1X01 in the table, representing the less-than path.
+- In the implemented control logic, the ALU produces 1 when rs1 < rs2 and 0 otherwise.
+- The branch should be taken when the comparison result is 1, which means ALUResult is non-zero and Zero = 0.
+- Therefore PCSrc = {0,~Zero}.
+- ResultSrc = XX.
+
+bge
+- Branch if greater than or equal uses the same signed comparison datapath as blt.
+- RegWrite = 0, ImmSrc = 010, ALUSrc = 0, ALUControl = X1X01, MemWrite = 0.
+- Here the branch is taken when rs1 is not less than rs2, so the ALU comparison result is 0 and Zero = 1.
+- Therefore PCSrc = {0,Zero}.
+- ResultSrc = XX.
+
+jal
+- jal is an unconditional jump with link.
+- RegWrite = 1 because rd receives the return address PC + 4.
+- ImmSrc = 100 because jal uses the J-type immediate.
+- ALUSrc = X and ALUControl = XXXXX because the ALU result is not needed to compute the next PC or the writeback value in this datapath.
+- MemWrite = 0 because there is no memory store.
+- ResultSrc = 11 so rd receives PCPlus4.
+- PCSrc = 01 so the next PC becomes PC + ImmExt.
+
+jalr
+- jalr is jump-and-link register.
+- RegWrite = 1 because rd receives PC + 4.
+- ImmSrc = 000 because jalr uses an I-type immediate.
+- ALUSrc = 1 because the jump target is formed from rs1 + ImmExt.
+- ALUControl = X0X10 because the ALU must add rs1 and ImmExt.
+- ResultSrc = 11 so rd receives PCPlus4.
+- PCSrc = 10 so the next PC comes from ALUResult.
+- MemWrite = 0.
+
+lui
+- lui loads the upper immediate directly into rd.
+- RegWrite = 1 because rd is written.
+- ImmSrc = 011 because this is a U-type immediate.
+- ALUSrc = X and ALUControl = XXXXX because the ALU is not needed.
+- MemWrite = 0.
+- ResultSrc = 00 because the top-level datapath writes back ImmExt directly.
+- PCSrc = 00 because execution continues to the next instruction.
+
+3. Notes about XXX and symbolic forms in the table
+
+XXX and XX mean "don't care", not "undefined". They are used when a signal has no effect on the final behaviour for that instruction.
+
+Examples:
+- R-type instructions do not use ImmExt, so ImmSrc can be written as XXX.
+- sw, beq, bne, blt, and bge do not write a register, so ResultSrc can be XX.
+- jal and lui do not rely on the ALU result in this datapath, so ALUSrc and ALUControl can be treated as don't-cares.
+
+The symbolic PCSrc forms in the CSV are shorthand for branch decisions:
+- {0,Zero} means branch on Zero
+- {0,~Zero} means branch on not-Zero
+
+This is equivalent to the control_unit.sv logic:
+- beq: PCSrc = Zero ? 2'b01 : 2'b00
+- bne: PCSrc = Zero ? 2'b00 : 2'b01
+- blt: PCSrc = Zero ? 2'b00 : 2'b01
+- bge: PCSrc = Zero ? 2'b01 : 2'b00
