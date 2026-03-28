@@ -30,7 +30,7 @@ module risc_v_tb;
         #12;
         reset = 1'b0;
         
-        #200;
+        #2000;
         $finish;
     end
 

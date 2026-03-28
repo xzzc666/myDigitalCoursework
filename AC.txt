@@ -1,0 +1,48 @@
+lui x31, 0x80000                # Memory-mapped address
+addi x31, x31, 0xFFC            # of CPU0I to 0x7FFFFFFC
+addi x1, zero, 0x80             # Test ADDI
+sw x1, 0(x31)                   # Output result
+addi x1, zero, 1
+addi x2, zero, 3
+add x3, x1, x2                  # Test ADD
+sw x3, 0(x31)
+sub x3, x1, x2                  # Test SUB
+sw x3, 0(x31)
+or x3, x1, x2                   # Test OR
+sw x3, 0(x31)
+sll x3, x1, x2                  # Test SLL
+sw x3, 0(x31)
+slt x3, x1, x2                  # Test SLT
+sw x3, 0(x31)
+andi x3, x2, 0x007              # Test ANDI
+sw x3, 0(x31)
+srli x3, x2, 1                  # Test SRLI
+sw x3, 0(x31)
+slti x3, x1, 0xFFF              # Test SLTI
+sw x3, 0(x31)
+sw x2, 0(zero)
+lw x3, 0(zero)                  # Test LW
+sw x3, 0(x31)
+
+label1:
+beq x1, x2, label1              # Test BEQ
+bne x1, x2, label2              # Test BNE
+addi x1, zero, 0x123
+sw x3, 0(x31)
+
+label2:
+blt x2, x1, label2              # Test BLT
+bge x2, x1, label3              # Test BGE
+addi x1, zero, 0x456
+sw x3, 0(x31)
+
+label3:
+jal x4, 16                      # Test JAL
+addi x3, zero, 0x789
+sw x3, 0(x31)
+jal zero, finish
+addi x3, zero, 0x111
+sw x3, 0(x31)
+jalr zero, x4, 0                # Test JALR
+
+finish:
