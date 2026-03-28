@@ -1,0 +1,128 @@
+Disassembly of program.txt
+
+0x00000000: 03200093    addi x1, x0, 50
+0x00000004: 80000537    lui  x10, 0x80000
+0x00000008: ffc52103    lw   x2, -4(x10)
+0x0000000C: 402081b3    sub  x3, x1, x2
+0x00000010: fe352e23    sw   x3, -4(x10)
+0x00000014: 00000063    beq  x0, x0, 0
+
+How to convert the machine code into RISC-V assembly
+
+Each instruction is 32 bits. The lowest 7 bits, instr[6:0], give the opcode, which identifies
+the instruction format. After the format is known, the remaining fields are decoded from fixed
+bit positions.
+
+Useful field locations
+
+R-type:
+- opcode  = instr[6:0]
+- rd      = instr[11:7]
+- funct3  = instr[14:12]
+- rs1     = instr[19:15]
+- rs2     = instr[24:20]
+- funct7  = instr[31:25]
+
+I-type:
+- opcode  = instr[6:0]
+- rd      = instr[11:7]
+- funct3  = instr[14:12]
+- rs1     = instr[19:15]
+- imm[11:0] = instr[31:20]
+
+S-type:
+- opcode  = instr[6:0]
+- imm[4:0]  = instr[11:7]
+- funct3    = instr[14:12]
+- rs1       = instr[19:15]
+- rs2       = instr[24:20]
+- imm[11:5] = instr[31:25]
+
+B-type:
+- opcode    = instr[6:0]
+- imm[11]   = instr[7]
+- imm[4:1]  = instr[11:8]
+- funct3    = instr[14:12]
+- rs1       = instr[19:15]
+- rs2       = instr[24:20]
+- imm[10:5] = instr[30:25]
+- imm[12]   = instr[31]
+- branch immediate = sign-extended {instr[31], instr[7], instr[30:25], instr[11:8], 1'b0}
+
+U-type:
+- opcode    = instr[6:0]
+- rd        = instr[11:7]
+- imm[31:12]= instr[31:12]
+
+Step-by-step decoding of this program
+
+1. 03200093
+- opcode = bits [6:0] = 0010011, so this is an I-type arithmetic instruction
+- rd = bits [11:7] = 00001, so rd = x1
+- funct3 = bits [14:12] = 000, which selects addi
+- rs1 = bits [19:15] = 00000, so rs1 = x0
+- imm[11:0] = bits [31:20] = 000000110010 = 0x032 = 50
+- therefore the instruction is addi x1, x0, 50
+
+2. 80000537
+- opcode = bits [6:0] = 0110111, so this is a U-type instruction
+- rd = bits [11:7] = 01010, so rd = x10
+- instr[31:12] = 0x80000
+- opcode 0110111 corresponds to lui
+- therefore the instruction is lui x10, 0x80000
+- execution writes 0x80000 << 12 = 0x80000000 into x10
+
+3. ffc52103
+- opcode = bits [6:0] = 0000011, so this is an I-type load instruction
+- rd = bits [11:7] = 00010, so rd = x2
+- funct3 = bits [14:12] = 010, which selects lw
+- rs1 = bits [19:15] = 01010, so rs1 = x10
+- imm[11:0] = bits [31:20] = 111111111100 = 0xFFC
+- 0xFFC is a 12-bit signed immediate, so sign extension gives -4
+- therefore the instruction is lw x2, -4(x10)
+
+4. 402081b3
+- opcode = bits [6:0] = 0110011, so this is an R-type instruction
+- rd = bits [11:7] = 00011, so rd = x3
+- funct3 = bits [14:12] = 000
+- rs1 = bits [19:15] = 00001, so rs1 = x1
+- rs2 = bits [24:20] = 00010, so rs2 = x2
+- funct7 = bits [31:25] = 0100000
+- for opcode 0110011 and funct3 000:
+  funct7 = 0000000 means add
+  funct7 = 0100000 means sub
+- therefore the instruction is sub x3, x1, x2
+
+5. fe352e23
+- opcode = bits [6:0] = 0100011, so this is an S-type store instruction
+- funct3 = bits [14:12] = 010, which selects sw
+- rs1 = bits [19:15] = 01010, so rs1 = x10
+- rs2 = bits [24:20] = 00011, so rs2 = x3
+- imm[11:5] = bits [31:25] = 1111111
+- imm[4:0] = bits [11:7] = 11100
+- combining them gives imm = 111111111100 = 0xFFC
+- sign extension gives -4
+- therefore the instruction is sw x3, -4(x10)
+
+6. 00000063
+- opcode = bits [6:0] = 1100011, so this is a B-type branch instruction
+- funct3 = bits [14:12] = 000, which selects beq
+- rs1 = bits [19:15] = 00000, so rs1 = x0
+- rs2 = bits [24:20] = 00000, so rs2 = x0
+- immediate bits are all zero, so the branch offset is 0
+- therefore the instruction is beq x0, x0, 0
+- since x0 always equals x0, this instruction branches to itself forever
+
+Expected behaviour
+
+The program forms the address 0x80000000 - 4 = 0x7FFFFFFC, which is the memory-mapped
+I/O address used by the provided data_memory_and_io module.
+
+It then:
+1. loads the constant 50 into x1
+2. reads CPUIn from 0x7FFFFFFC into x2
+3. computes x3 = 50 - CPUIn
+4. writes x3 to CPUOut by storing to 0x7FFFFFFC
+5. loops forever at the final beq instruction
+
+For the default testbench input CPUIn = 20, the expected output is CPUOut = 30.

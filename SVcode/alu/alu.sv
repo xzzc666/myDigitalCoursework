@@ -35,10 +35,9 @@ module alu (
             1'b1: logic_result = A | B;
         endcase
 
-        // Set-less-than path
-        // According to the ALU structure, bit [31] of the subtraction result
-        // is zero-extended to 32 bits
-        slt_result = {31'b0, arith_result[31]};
+        // Signed comparison must not rely only on the subtraction sign bit,
+        // because subtraction can overflow when operands have different signs.
+        slt_result = {31'b0, $signed(A) < $signed(B)};
 
         // Main ALU output multiplexer
         case (ALUControl[1:0])
