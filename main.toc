@@ -83,3 +83,4 @@
 \contentsline {paragraph}{Test Set 2: \texttt {output\_vcd\_2}}{66}{section*.37}%
 \contentsline {paragraph}{Test Set 3: \texttt {output\_vcd\_3}}{67}{section*.38}%
 \contentsline {paragraph}{Conclusion}{67}{section*.39}%
+\contentsline {section}{\numberline {A}Appendix}{67}{appendix.A}%

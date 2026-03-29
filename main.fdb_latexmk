@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1774807429.78471 "d:/MyCode/latex/Verilog/main.tex" "main.pdf" "main" 1774807434.33638 0
+["pdflatex"] 1774807928.79934 "d:/MyCode/latex/Verilog/main.tex" "main.pdf" "main" 1774807933.15714 0
   "C:/Users/dongz/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1772684282 202101 cad7bc6f2770a48f6562a2823a2b2dab ""
   "C:/Users/dongz/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1000.pk" 1774807277 11548 77d34df0f5e2cd5db4f05a7ca2c067b7 ""
   "C:/Users/dongz/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tctt0900.pk" 1774735952 8332 df0e25982547af8b872f20535ce6dc22 ""
@@ -260,14 +260,14 @@
   "TASK2.2/program.txt" 1774805529 126 39746b7e90c0450333ffa1a0dcd3a2a4 ""
   "TASK2.2/risc_v_tb.sv" 1774806174 1718 5665079a700271c6e6f08125c5279375 ""
   "TASK2.2/riscv.txt" 1774806471 239 29494ad9ed2e569eb5af601abb636609 ""
-  "d:/MyCode/latex/Verilog/main.tex" 1774807270 21019 89e4cfdc80a9d419afcbc8b2ad01535d ""
+  "d:/MyCode/latex/Verilog/main.tex" 1774807923 21205 e3673529ac6060a8fdafcc1f7a028755 ""
   "figures/ori.png" 1774732669 49473 9041b946a58b576993cd1372c5f39faf ""
   "figures/redesign.jpg" 1773963492 139897 dcef7fc9bee7370e3a8ab32281df1aee ""
   "figures/table.png" 1773947496 119036 857fe9bff6f048332931a28ea128bf76 ""
-  "main.aux" 1774807433 23508 00592ba56eaefd5c6840e5cf77e1e333 "pdflatex"
-  "main.out" 1774807433 7324 4b23b1f4f5395bcee1c43c1fd77fbdf4 "pdflatex"
-  "main.tex" 1774807270 21019 89e4cfdc80a9d419afcbc8b2ad01535d ""
-  "main.toc" 1774807433 7675 0389511cbfb50b9e101e4699b285abbf "pdflatex"
+  "main.aux" 1774807932 23615 b5203f60ce943b4588c159a28c1d41a9 "pdflatex"
+  "main.out" 1774807932 7422 66d3f331edf071131f48bccc86443bca "pdflatex"
+  "main.tex" 1774807923 21205 e3673529ac6060a8fdafcc1f7a028755 ""
+  "main.toc" 1774807932 7741 6cbed81e8a544871c6fb80107a300579 "pdflatex"
   (generated)
   "main.aux"
   "main.log"
