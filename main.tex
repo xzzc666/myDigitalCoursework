@@ -8,24 +8,68 @@
 
 \usepackage{xcolor}
 
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{rulegray}{RGB}{200,200,200}
+\definecolor{numgray}{RGB}{120,120,120}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{coderule}{RGB}{180,180,180}
+\definecolor{resultrule}{RGB}{220,220,220}
+\definecolor{numgray}{RGB}{120,120,120}
+
+% ===== 代码块 =====
 \lstdefinestyle{codeblock}{
     basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{coderule},
+    framerule=0.5pt,
+    framesep=5pt,
+    xleftmargin=6pt,
+    xrightmargin=6pt,
     breaklines=true,
+    breakatwhitespace=false,
+    postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
     columns=fullflexible,
+    keepspaces=true,
     showstringspaces=false,
     showspaces=false,
     showtabs=false,
-    frame=single
+    tabsize=4,
+    numbers=left,
+    numberstyle=\scriptsize\color{numgray},
+    numbersep=8pt,
+    aboveskip=10pt,
+    belowskip=10pt
 }
 
+% ===== 结果块 =====
 \lstdefinestyle{resultblock}{
-    basicstyle=\ttfamily\small,
+    basicstyle=\ttfamily\footnotesize,
+    backgroundcolor=\color{white},
+    frame=single,
+    rulecolor=\color{resultrule},
+    framerule=0.3pt,
+    framesep=5pt,
+    xleftmargin=6pt,
+    xrightmargin=6pt,
     breaklines=true,
+    breakatwhitespace=false,
     columns=fullflexible,
+    keepspaces=true,
     showstringspaces=false,
     showspaces=false,
     showtabs=false,
-    frame=single
+    tabsize=4,
+    numbers=none,
+    aboveskip=8pt,
+    belowskip=8pt
 }
 % ——去除首页 ACM Reference Format 区块、页眉版权脚注等——
 \settopmatter{printacmref=false}        % 不打印“ACM Reference Format”
@@ -251,25 +295,25 @@ Both instructions write $PC + 4$ to the destination register (\texttt{ResultSrc 
 
 The SystemVerilog implementation of the Program Counter module is shown below.
 
-\lstinputlisting[caption={Program Counter module},label={lst:pc}]{SVcode/pc/pc.sv}
+\lstinputlisting[style=codeblock,caption={Program Counter module},label={lst:pc}]{SVcode/pc/pc.sv}
 
 \subsubsection{Extend}
 
 The SystemVerilog implementation of the Extend module is shown below.
 
-\lstinputlisting[caption={Extend module},label={lst:extend}]{SVcode/extend/extend.sv}
+\lstinputlisting[style=codeblock,caption={Extend module},label={lst:extend}]{SVcode/extend/extend.sv}
 
 \subsubsection{Arithmetic Logic Unit}
 
 The SystemVerilog implementation of the Arithmetic Logic Unit module is shown below.
 
-\lstinputlisting[caption={Arithmetic Logic Unit module},label={lst:alu}]{SVcode/alu/alu.sv}
+\lstinputlisting[style=codeblock,caption={Arithmetic Logic Unit module},label={lst:alu}]{SVcode/alu/alu.sv}
 
 \subsubsection{Control Unit}
 
 The SystemVerilog implementation of the Control Unit module is shown below.
 
-\lstinputlisting[caption={Control Unit module},label={lst:control}]{SVcode/control_unit/control_unit.sv}
+\lstinputlisting[style=codeblock,caption={Control Unit module},label={lst:control}]{SVcode/control_unit/control_unit.sv}
 
 
 \subsection{SystemVerilog testbench of the sub-blocks}\label{sect:testALU}
@@ -278,9 +322,9 @@ The SystemVerilog implementation of the Control Unit module is shown below.
 
 The testbench code of the Program Counter module is shown below.
 
-\lstinputlisting[caption={Program Counter testbench},label={lst:pc_tb}]{SVcode/pc/pc_tb.sv}
+\lstinputlisting[style=codeblock,caption={Program Counter testbench},label={lst:pc_tb}]{SVcode/pc/pc_tb.sv}
 
-\lstinputlisting[caption={Terminal result of the Program Counter module},label={lst:pc_vcd}]{SVcode/pc/output_vcd.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the Program Counter module},label={lst:pc_vcd}]{SVcode/pc/output_vcd.txt}
 
 \begin{figure}[H]
     \centering
@@ -297,9 +341,9 @@ The analysis of the Program Counter testbench is shown below.
 
 The testbench code of the Extend module is shown below.
 
-\lstinputlisting[caption={Extend testbench},label={lst:extend_tb}]{SVcode/extend/extend_tb.sv}
+\lstinputlisting[style=codeblock,caption={Extend testbench},label={lst:extend_tb}]{SVcode/extend/extend_tb.sv}
 
-\lstinputlisting[caption={Terminal result of the Extend module},label={lst:extend_vcd}]{SVcode/extend/output_vcd.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the Extend module},label={lst:extend_vcd}]{SVcode/extend/output_vcd.txt}
 
 \begin{figure}[H]
     \centering
@@ -316,9 +360,9 @@ The analysis of the Extend testbench is shown below.
 
 The testbench code of the Arithmetic Logic Unit module is shown below.
 
-\lstinputlisting[caption={Arithmetic Logic Unit testbench},label={lst:alu_tb}]{SVcode/alu/alu_tb.sv}
+\lstinputlisting[style=codeblock,caption={Arithmetic Logic Unit testbench},label={lst:alu_tb}]{SVcode/alu/alu_tb.sv}
 
-\lstinputlisting[caption={Terminal result of the Arithmetic Logic Unit module},label={lst:alu_vcd}]{SVcode/alu/output_vcd.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the Arithmetic Logic Unit module},label={lst:alu_vcd}]{SVcode/alu/output_vcd.txt}
 
 \begin{figure}[H]
     \centering
@@ -335,9 +379,9 @@ The analysis of the Arithmetic Logic Unit testbench is shown below.
 
 The testbench code of the Control Unit module is shown below.
 
-\lstinputlisting[caption={Control Unit testbench},label={lst:control_tb}]{SVcode/control_unit/control_unit_tb.sv}
+\lstinputlisting[style=codeblock,caption={Control Unit testbench},label={lst:control_tb}]{SVcode/control_unit/control_unit_tb.sv}
 
-\lstinputlisting[caption={Terminal result of the Control Unit module},label={lst:control_vcd}]{SVcode/control_unit/output_vcd.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the Control Unit module},label={lst:control_vcd}]{SVcode/control_unit/output_vcd.txt}
 
 \begin{figure}[H]
     \centering
@@ -356,7 +400,7 @@ The analysis of the Control Unit testbench is shown below.
 
 The SystemVerilog implementation of the top-level RISC-V processor is shown below.
 
-\lstinputlisting[caption={Top-level RISC-V module},label={lst:riscv_code}]{SVcode/risc_v/risc_v.sv}
+\lstinputlisting[style=codeblock,caption={Top-level RISC-V module},label={lst:riscv_code}]{SVcode/risc_v/risc_v.sv}
 
 \subsection{program description and converting}
 
@@ -366,11 +410,11 @@ The SystemVerilog implementation of the top-level RISC-V processor is shown belo
 
 The testbench code of the top-level RISC-V processor is shown below.
 
-\lstinputlisting[caption={RISC-V testbench},label={lst:riscv_tb}]{SVcode/risc_v/risc_v_tb.sv}
+\lstinputlisting[style=codeblock,caption={RISC-V testbench},label={lst:riscv_tb}]{SVcode/risc_v/risc_v_tb.sv}
 
 \subsection{terminal result screenshot}
 
-\lstinputlisting[caption={Terminal result of the top-level RISC-V simulation},label={lst:riscv_vcd}]{SVcode/risc_v/output_vcd.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the top-level RISC-V simulation},label={lst:riscv_vcd}]{SVcode/risc_v/output_vcd.txt}
 
 \subsection{gtkwave result screenshot}
 
@@ -393,7 +437,7 @@ The testbench code of the top-level RISC-V processor is shown below.
 
 \subsection{Terminal Result Screenshot of the Self-Designed RISC-V Processor}
 
-\lstinputlisting[caption={Terminal result of the self-designed RISC-V processor running the test program},label={lst:riscv_vcd_long}]{SVcode/risc_v/output_vcd_long.txt}
+\lstinputlisting[style=resultblock,caption={Terminal result of the self-designed RISC-V processor running the test program},label={lst:riscv_vcd_long}]{SVcode/risc_v/output_vcd_long.txt}
 
 \subsection{GTKWave Result Screenshot of the Self-Designed RISC-V Processor}
 
@@ -546,5 +590,7 @@ The testbench code of the top-level RISC-V processor is shown below.
 The complete source code for this coursework is available in the following GitHub repository:
 
 \url{https://github.com/xzzc666/myDigitalCoursework}
+
+In completing this coursework, AI tools were used as supporting tools for translation, and debugging code issues.
 
 \end{document}
