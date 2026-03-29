@@ -1,0 +1,22 @@
+lui   x5, 0x80000      # x5 = 0x80000000
+addi  x5, x5, -4       # x5 = 0x7FFFFFFC (I/O address)
+
+lw    x6, 0(x5)        # a = CPUIn
+addi  x7, x0, 0        # sum = 0
+addi  x28, x0, 0       # i = 0
+addi  x30, x0, 8       # loop limit = 8
+
+loop:
+andi  x29, x6, 1       # tmp = a & 1
+beq   x29, x0, skip    # if lowest bit == 0, skip increment
+addi  x7, x7, 1        # sum += 1
+
+skip:
+srli  x6, x6, 1        # a = a >> 1
+addi  x28, x28, 1      # i += 1
+beq   x28, x30, done   # if i == 8, finish
+beq   x0, x0, loop     # unconditional jump back to loop
+
+done:
+sw    x7, 0(x5)        # CPUOut = sum
+beq   x0, x0, done     # stop here forever

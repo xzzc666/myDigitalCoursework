@@ -1,0 +1,29 @@
+\paragraph{Test Set 1: \texttt{output\_vcd\_1}}
+
+The initial register values are \texttt{A = 0x00000003} and \texttt{B = 0x00000004}. The
+expected multiplication result is \texttt{3 \texttimes 4 = 12}, which is
+\texttt{0x0000000C}. In the simulation trace, the final output is
+\texttt{CPUOut = 0000000c}, so this test result is correct.
+
+\paragraph{Test Set 2: \texttt{output\_vcd\_2}}
+
+The initial register values are \texttt{A = 0x00000000} and \texttt{B = 0x00000005}. The
+expected multiplication result is \texttt{0 \texttimes 5 = 0}, which is
+\texttt{0x00000000}. The final simulation output is \texttt{CPUOut = 00000000}, so this
+test result is correct.
+
+\paragraph{Test Set 3: \texttt{output\_vcd\_3}}
+
+The initial register values are \texttt{A = 0x0000000E} and \texttt{B = 0x0000000F}. The
+expected result is \texttt{14 \texttimes 15 = 210}, which is \texttt{0x000000D2}. In the
+simulation trace, the final output is \texttt{CPUOut = 000000d2}, so this test result is
+correct.
+
+\paragraph{Conclusion}
+
+All three Task 2.2 test sets produce the expected multiplication result. The traces also
+show the correct shift-and-add behaviour: when the least significant bit of \texttt{B} is
+\texttt{1}, the current value of \texttt{A} is added to \texttt{P}; then \texttt{A} is
+shifted left, \texttt{B} is shifted right, and the loop counter increases until eight
+iterations are completed. This confirms that the RISC-V multiplication program functions
+correctly.

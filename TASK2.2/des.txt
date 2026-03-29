@@ -1,0 +1,17 @@
+\paragraph{Translation from C to RISC-V Assembly}
+
+In this task, \texttt{A} and \texttt{B} are preloaded into registers \texttt{s0} and
+\texttt{s1}, respectively. The product \texttt{P} is stored in \texttt{s2}, and the loop
+counter \texttt{i} is stored in \texttt{t1}. The constant \texttt{8} is also stored in a
+register so that the loop termination condition can be checked directly in hardware.
+
+The \texttt{while} loop is implemented in assembly using a loop label. The condition
+\texttt{(B \& 1) == 1} is realised using \texttt{andi} to isolate the least significant bit
+of \texttt{B}, followed by \texttt{beq} to skip the addition when this bit is zero. The
+statement \texttt{P = P + A} is implemented using \texttt{add}. The shift operations in the
+C code are translated directly into \texttt{slli} and \texttt{srli}, while
+\texttt{i = i + 1} becomes \texttt{addi}. The condition \texttt{i == 8} is implemented by
+comparing \texttt{i} with the loop limit register using \texttt{blt}; if \texttt{i} is
+still smaller than \texttt{8}, the program branches back to the loop. After the loop
+finishes, the result \texttt{P} is written to \texttt{CPUOut} through the memory-mapped
+output address \texttt{0x7FFFFFFC}.

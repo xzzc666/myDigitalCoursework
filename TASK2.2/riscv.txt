@@ -1,0 +1,19 @@
+addi t1, x0, 0
+addi s2, x0, 0
+addi t3, x0, 8
+
+loop:
+andi t2, s1, 1
+beq  t2, x0, skip_add
+add  s2, s2, s0
+
+skip_add:
+slli s0, s0, 1
+srli s1, s1, 1
+addi t1, t1, 1
+blt  t1, t3, loop
+
+lui  t0, 0x80000
+addi t0, t0, -4
+sw   s2, 0(t0)
+jal  x0, 0

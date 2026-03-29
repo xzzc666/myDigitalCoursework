@@ -6,22 +6,26 @@
 \usepackage{float}
 
 
-\lstset{
-  basicstyle=\ttfamily\small,
-  keywordstyle=\color{blue},
-  commentstyle=\color{gray},
-  numbers=left,
-  numberstyle=\tiny,
-  stepnumber=1,
-  numbersep=5pt,
-  frame=single,
-  breaklines=true,
-  captionpos=b,
-  tabsize=2
-}
-\lstset{
+\usepackage{xcolor}
+
+\lstdefinestyle{codeblock}{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    columns=fullflexible,
+    showstringspaces=false,
     showspaces=false,
-    showstringspaces=false
+    showtabs=false,
+    frame=single
+}
+
+\lstdefinestyle{resultblock}{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    columns=fullflexible,
+    showstringspaces=false,
+    showspaces=false,
+    showtabs=false,
+    frame=single
 }
 % ——去除首页 ACM Reference Format 区块、页眉版权脚注等——
 \settopmatter{printacmref=false}        % 不打印“ACM Reference Format”
@@ -35,6 +39,9 @@
 
 
 \maketitle
+
+\tableofcontents
+\newpage
 
 \section{Task1.1}
 
@@ -54,7 +61,7 @@
 
 
 
-\subsection{Problems of the Original Microarchitecture}
+\subsection{Problems of the Original Microarchitecture and Corresponding Modifications}
 
 The original microarchitecture shown in Figure~\ref{fig:ori} cannot support all RV32I instructions due to several structural limitations. The key issues and corresponding modifications (shown in Figure~\ref{fig:redesign}) are summarised below.
 
@@ -351,7 +358,7 @@ The SystemVerilog implementation of the top-level RISC-V processor is shown belo
 
 \lstinputlisting[caption={Top-level RISC-V module},label={lst:riscv_code}]{SVcode/risc_v/risc_v.sv}
 
-\subsection{program.txt convert}
+\subsection{program description and converting}
 
 \input{SVcode/risc_v/analyze_convert.txt}
 
@@ -417,5 +424,120 @@ The testbench code of the top-level RISC-V processor is shown below.
 
 \input{SVcode/risc_v/analyze_result.txt}
 
+
+
+\section{Task2.1}
+
+\subsection{C code}
+
+\lstinputlisting[style=codeblock,caption={C reference code for Task 2.1},label={lst:task21_c}]{TASK2.1/c.txt}
+
+\subsection{RISC-V code}
+
+\lstinputlisting[style=codeblock,caption={RISC-V code for Task 2.1},label={lst:task21_riscv}]{TASK2.1/riscv.txt}
+
+\input{TASK2.1/des.txt}
+
+\subsection{Machine code}
+
+\lstinputlisting[style=codeblock,caption={Machine code for Task 2.1},label={lst:task21_mc}]{TASK2.1/program.txt}
+
+\subsection{testbench}
+
+\lstinputlisting[style=codeblock,caption={Testbench for Task 2.1},label={lst:task21_tb}]{TASK2.1/risc_v_tb.sv}
+
+\subsection{result 1}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 1 for Task 2.1},label={lst:task21_vcd1}]{TASK2.1/output_vcd_1.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.1/output_gtkwave_1.png}
+    \caption{GTKWave result 1 for Task 2.1.}
+    \label{fig:task21_gtkwave1}
+\end{figure}
+
+\subsection{result 2}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 2 for Task 2.1},label={lst:task21_vcd2}]{TASK2.1/output_vcd_2.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.1/output_gtkwave_2.png}
+    \caption{GTKWave result 2 for Task 2.1.}
+    \label{fig:task21_gtkwave2}
+\end{figure}
+
+\subsection{result 3}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 3 for Task 2.1},label={lst:task21_vcd3}]{TASK2.1/output_vcd_3.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.1/output_gtkwave_3.png}
+    \caption{GTKWave result 3 for Task 2.1.}
+    \label{fig:task21_gtkwave3}
+\end{figure}
+
+\subsection{analyze}
+
+\input{TASK2.1/analyze.txt}
+
+\section{Task2.2}
+
+\subsection{C code}
+
+\lstinputlisting[style=codeblock,caption={C reference code for Task 2.2},label={lst:task22_c}]{TASK2.2/c.txt}
+
+\subsection{RISC-V code}
+
+\lstinputlisting[style=codeblock,caption={RISC-V code for Task 2.2},label={lst:task22_riscv}]{TASK2.2/riscv.txt}
+
+\input{TASK2.2/des.txt}
+
+\subsection{Machine code}
+
+\lstinputlisting[style=codeblock,caption={Machine code for Task 2.2},label={lst:task22_mc}]{TASK2.2/program.txt}
+
+\subsection{testbench}
+
+\lstinputlisting[style=codeblock,caption={Testbench for Task 2.2},label={lst:task22_tb}]{TASK2.2/risc_v_tb.sv}
+
+\subsection{result 1}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 1 for Task 2.2},label={lst:task22_vcd1}]{TASK2.2/output_vcd_1.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.2/output_gtkwave_1.png}
+    \caption{GTKWave result 1 for Task 2.2.}
+    \label{fig:task22_gtkwave1}
+\end{figure}
+
+\subsection{result 2}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 2 for Task 2.2},label={lst:task22_vcd2}]{TASK2.2/output_vcd_2.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.2/output_gtkwave_2.png}
+    \caption{GTKWave result 2 for Task 2.2.}
+    \label{fig:task22_gtkwave2}
+\end{figure}
+
+\subsection{result 3}
+
+\lstinputlisting[style=resultblock,caption={Terminal result 3 for Task 2.2},label={lst:task22_vcd3}]{TASK2.2/output_vcd_3.txt}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{TASK2.2/output_gtkwave_3.png}
+    \caption{GTKWave result 3 for Task 2.2.}
+    \label{fig:task22_gtkwave3}
+\end{figure}
+
+\subsection{analyze}
+
+\input{TASK2.2/analyze.txt}
 
 \end{document}

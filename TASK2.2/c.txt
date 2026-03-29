@@ -1,0 +1,18 @@
+int P = 0;
+int i = 0;
+
+while (1) {
+    if ((B & 1) == 1) {
+        P = P + A;
+    }
+
+    A = A << 1;
+    B = B >> 1;
+    i = i + 1;
+
+    if (i == 8) {
+        break;
+    }
+}
+
+return P;

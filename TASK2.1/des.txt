@@ -1,0 +1,17 @@
+\paragraph{Translation from C to RISC-V Assembly}
+
+This program was translated from C to RISC-V assembly by first identifying the variables and
+the control flow in the original C implementation. The variable \texttt{a} is stored in a
+register and loaded from \texttt{CPUIn} through the memory-mapped I/O address
+\texttt{0x7FFFFFFC}. The variables \texttt{sum} and \texttt{i} are also assigned to
+registers and are initialised to zero using \texttt{addi}.
+
+The \texttt{while} loop in C is translated into a loop label in assembly. The expression
+\texttt{(a \& 1U)} is implemented using \texttt{andi}, because this instruction directly
+extracts the least significant bit. The \texttt{if} statement is implemented using
+\texttt{beq}: if the extracted bit is zero, the program branches to \texttt{skip};
+otherwise, it executes \texttt{addi} to increment \texttt{sum}. The statements
+\texttt{a = a >> 1} and \texttt{i += 1} are implemented using \texttt{srli} and
+\texttt{addi}, respectively. The termination condition \texttt{i == 8} is checked using
+\texttt{beq}, and if the condition is true, the program branches to \texttt{done}. Finally,
+\texttt{sum} is written to \texttt{CPUOut} using \texttt{sw}.

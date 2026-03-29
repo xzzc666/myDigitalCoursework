@@ -1,0 +1,85 @@
+\contentsline {section}{Contents}{1}{section*.1}%
+\contentsline {section}{\numberline {1}Task1.1}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Problems of the Original Microarchitecture and Corresponding Modifications}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Limitation 1: Missing PC Input(\texttt {jalr})}{4}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Limitation 2: Immediate Cannot Be Written Back (\texttt {lui})}{4}{subsubsection.1.1.2}%
+\contentsline {subsubsection}{\numberline {1.1.3}Limitation 3: Insufficient ALU Control Width (\texttt {all operations that rely on addition, subtraction or shift functionality})}{4}{subsubsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.2}Justification for Not Using the Negative Signal}{5}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Task1.2}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Meaning of Control Signals}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Instruction-by-Instruction Explanation}{7}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}R-type Arithmetic and Logic Instructions (\texttt {add}, \texttt {sub}, \texttt {and}, \texttt {or})}{7}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}R-type Shift and Comparison Instructions (\texttt {sll}, \texttt {srl}, \texttt {slt})}{7}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}I-type Arithmetic and Logic Instructions (\texttt {addi}, \texttt {andi}, \texttt {ori})}{7}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}I-type Shift and Comparison Instructions (\texttt {slli}, \texttt {srli}, \texttt {slti})}{7}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}Memory Instructions (\texttt {lw}, \texttt {sw})}{7}{subsubsection.2.2.5}%
+\contentsline {subsubsection}{\numberline {2.2.6}Branch Instructions (\texttt {beq}, \texttt {bne}, \texttt {blt}, \texttt {bge})}{7}{subsubsection.2.2.6}%
+\contentsline {subsubsection}{\numberline {2.2.7}Jump Instructions (\texttt {jal}, \texttt {jalr})}{8}{subsubsection.2.2.7}%
+\contentsline {subsubsection}{\numberline {2.2.8}Immediate Upper Instruction (\texttt {lui})}{8}{subsubsection.2.2.8}%
+\contentsline {section}{\numberline {3}Task1.3}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}SystemVerilog code of the sub-blocks}{8}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Program Counter}{8}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Extend}{8}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Arithmetic Logic Unit}{9}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}Control Unit}{11}{subsubsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.2}SystemVerilog testbench of the sub-blocks}{15}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Program Counter}{15}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Extend}{17}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Arithmetic Logic Unit}{21}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Control Unit}{25}{subsubsection.3.2.4}%
+\contentsline {section}{\numberline {4}Task1.4}{31}{section.4}%
+\contentsline {subsection}{\numberline {4.1}riscv code}{31}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}program description and converting}{33}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Disassembly of \texttt {program}}{33}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Method for Decoding Machine Code}{34}{subsubsection.4.2.2}%
+\contentsline {paragraph}{R-type}{34}{section*.9}%
+\contentsline {paragraph}{I-type}{34}{section*.10}%
+\contentsline {paragraph}{S-type}{34}{section*.11}%
+\contentsline {paragraph}{B-type}{34}{section*.12}%
+\contentsline {paragraph}{U-type}{34}{section*.13}%
+\contentsline {subsubsection}{\numberline {4.2.3}Step-by-Step Decoding}{34}{subsubsection.4.2.3}%
+\contentsline {paragraph}{Instruction 1: 03200093}{34}{section*.14}%
+\contentsline {paragraph}{Instruction 2: 80000537}{35}{section*.15}%
+\contentsline {paragraph}{Instruction 3: ffc52103}{35}{section*.16}%
+\contentsline {paragraph}{Instruction 4: 402081b3}{35}{section*.17}%
+\contentsline {paragraph}{Instruction 5: fe352e23}{35}{section*.18}%
+\contentsline {paragraph}{Instruction 6: 00000063}{35}{section*.19}%
+\contentsline {subsubsection}{\numberline {4.2.4}Expected Behaviour}{35}{subsubsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.3}riscv testbench code}{35}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}terminal result screenshot}{37}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}gtkwave result screenshot}{37}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}result analyze}{37}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Task1.5}{37}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Introduction to the Test Program}{37}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Terminal Result Screenshot of the Self-Designed RISC-V Processor}{38}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}GTKWave Result Screenshot of the Self-Designed RISC-V Processor}{39}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Results from the Online RISC-V Simulator}{39}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Result Analysis}{40}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Task2.1}{40}{section.6}%
+\contentsline {subsection}{\numberline {6.1}C code}{40}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}RISC-V code}{41}{subsection.6.2}%
+\contentsline {paragraph}{Translation from C to RISC-V Assembly}{41}{section*.24}%
+\contentsline {subsection}{\numberline {6.3}Machine code}{41}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}testbench}{42}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}result 1}{43}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}result 2}{46}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}result 3}{49}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}analyze}{52}{subsection.6.8}%
+\contentsline {paragraph}{Test Set 1: \texttt {output\_vcd\_1}}{52}{section*.28}%
+\contentsline {paragraph}{Test Set 2: \texttt {output\_vcd\_2}}{52}{section*.29}%
+\contentsline {paragraph}{Test Set 3: \texttt {output\_vcd\_3}}{52}{section*.30}%
+\contentsline {paragraph}{Conclusion}{52}{section*.31}%
+\contentsline {section}{\numberline {7}Task2.2}{52}{section.7}%
+\contentsline {subsection}{\numberline {7.1}C code}{52}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}RISC-V code}{53}{subsection.7.2}%
+\contentsline {paragraph}{Translation from C to RISC-V Assembly}{53}{section*.32}%
+\contentsline {subsection}{\numberline {7.3}Machine code}{53}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}testbench}{54}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}result 1}{55}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}result 2}{59}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}result 3}{62}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}analyze}{66}{subsection.7.8}%
+\contentsline {paragraph}{Test Set 1: \texttt {output\_vcd\_1}}{66}{section*.36}%
+\contentsline {paragraph}{Test Set 2: \texttt {output\_vcd\_2}}{66}{section*.37}%
+\contentsline {paragraph}{Test Set 3: \texttt {output\_vcd\_3}}{67}{section*.38}%
+\contentsline {paragraph}{Conclusion}{67}{section*.39}%

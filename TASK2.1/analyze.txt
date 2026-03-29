@@ -1,0 +1,28 @@
+\paragraph{Test Set 1: \texttt{output\_vcd\_1}}
+
+The input value is \texttt{CPUIn = 0x00004959}. The program only counts the number of
+\texttt{1}s in the least significant byte, so the effective input is \texttt{0x59}, which is
+\texttt{01011001} in binary. This byte contains four \texttt{1}s, so the expected result is
+\texttt{CPUOut = 0x00000004}. In the simulation trace, the final stable output is
+\texttt{CPUOut = 00000004}, so this test result is correct.
+
+\paragraph{Test Set 2: \texttt{output\_vcd\_2}}
+
+The input value is \texttt{CPUIn = 0x000007FF}. The least significant byte is
+\texttt{0xFF}, which is \texttt{11111111} in binary. This byte contains eight \texttt{1}s,
+so the expected result is \texttt{CPUOut = 0x00000008}. In the recorded result, the final
+output is \texttt{CPUOut = 00000008}, so this test result is correct.
+
+\paragraph{Test Set 3: \texttt{output\_vcd\_3}}
+
+The input value is \texttt{CPUIn = 0x00000000}. The least significant byte is
+\texttt{0x00}, which contains no \texttt{1}s. Therefore, the expected result is
+\texttt{CPUOut = 0x00000000}. The simulation output ends with
+\texttt{CPUOut = 00000000}, so this test result is correct.
+
+\paragraph{Conclusion}
+
+All three Task 2.1 test sets produce the correct output. This shows that the RISC-V program
+correctly reads the input, repeatedly checks the least significant bit, shifts the input to
+the right, counts the number of \texttt{1}s over eight iterations, and writes the final
+count to \texttt{CPUOut}.
